@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Route, Routes } from "react-router";
+import { HashRouter } from "react-router-dom";
+import "./App.css";
+import { Layout } from "./components/Layout";
+import { Landing } from "./pages";
+import { DetailPage } from "./pages/DetailPage";
+import { SearchPage } from "./pages/SearchPage";
 
 function App() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route path="/" element={<Landing />} />
+              <Route path="/movie" element={<SearchPage />}>
+                <Route path="/movie/detail/:movieId" element={<DetailPage />} />
+              </Route>
+            </Route>
+          </Routes>
+        </HashRouter>
+      </ChakraProvider>
+    </QueryClientProvider>
   );
 }
 
